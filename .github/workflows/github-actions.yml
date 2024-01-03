@@ -56,7 +56,7 @@ jobs:
           images: |
             docker.io/cbush06/patient-portal
           tags: |
-            type=raw,value=latest,enable={{ is_default_branch }}
+            type=ref,value=latest,enable={{ is_default_branch }}
             type=semver,pattern={{raw}},suffix=-RC,enable=${{ github.event.release.prereleased }}
             type=semver,pattern={{raw}},enable=${{ github.event.release.released }}
       - name: Build and push Docker image
