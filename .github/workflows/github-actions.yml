@@ -32,7 +32,7 @@ jobs:
 
   publish:
     needs: build
-    if: ${{ github.ref_name == github.event.repository.default_branch || github.event.action == 'prereleased' || github.event.action == 'released' }}
+    if: ${{ github.ref_name == github.event.repository.default_branch || ( github.event.release != null && contains(fromJson('["created", "prereleased", "released"]'), github.event.action) }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -57,8 +57,8 @@ jobs:
             docker.io/cbush06/patient-portal
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern={{raw}},suffix=-RC,enable=${{ github.event.action == 'prereleased' }}
-            type=semver,pattern={{raw}},enable=${{ github.event.action == 'released' }}
+            type=semver,pattern={{raw}},suffix=-RC,enable=${{ github.event.release.prerelease }}
+            type=semver,pattern={{raw}},enable=${{ !github.event.release.prerelease }}
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
