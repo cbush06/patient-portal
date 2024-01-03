@@ -53,9 +53,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: docker.io/cbush06/patient-portal
+          images: |
+            docker.io/cbush06/patient-portal
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest,enable={{ is_default_branch }}
             type=semver,pattern={{raw}},suffix=-RC,enable=${{ github.event.release.prereleased }}
             type=semver,pattern={{raw}},enable=${{ github.event.release.released }}
       - name: Build and push Docker image
