@@ -32,7 +32,7 @@ jobs:
 
   publish:
     needs: build
-    if: ${{ github.ref_name == github.event.repository.default_branch || ( github.event.release != null && contains(fromJson('["created", "prereleased", "released"]'), github.event.action) }}
+    if: ${{ github.ref_name == github.event.repository.default_branch || ( github.event.release != null && contains(fromJson('["created", "prereleased", "released"]'), github.event.action) ) }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
