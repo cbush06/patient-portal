@@ -10,7 +10,7 @@ on:
     branches: [ $default-branch ]
 
 jobs:
-  
+
   build:
     runs-on: ubuntu-latest
     strategy:
@@ -31,7 +31,7 @@ jobs:
           path: dist
 
   publish:
-    if: ${{ is_default_branch || github.event.release.prereleased || github.event.release.released }}
+    if: ${{ github.ref_name == github.event.repository.default_branch || github.event.release.action == 'prereleased' || github.event.release == 'released' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
