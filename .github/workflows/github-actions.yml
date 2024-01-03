@@ -31,6 +31,7 @@ jobs:
           path: dist
 
   publish:
+    needs: build
     if: ${{ github.ref_name == github.event.repository.default_branch || github.event.release.action == 'prereleased' || github.event.release == 'released' }}
     runs-on: ubuntu-latest
     strategy:
@@ -46,8 +47,8 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
