@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import {ref, useSSRContext} from 'vue'
 
 defineProps({
@@ -6,7 +6,11 @@ defineProps({
 })
 
 const gitTagCommit = ref(import.meta.env.VITE_GIT_REF);
-const ctx = useSSRContext();
+let ctx : Record<string, any> | undefined;
+
+if(import.meta.env.SSR) {
+  ctx = useSSRContext();
+}
 </script>
 
 <template>
@@ -16,7 +20,7 @@ const ctx = useSSRContext();
     <span><strong>Git Tag/Commit</strong></span>
     <span class="data">{{ gitTagCommit }}</span>
     <span><strong>Host</strong></span>
-    <span class="data">{{ ctx.hostname }}</span>
+    <span class="data">{{ ctx?.hostname ?? '' }}</span>
   </div>
 </template>
 
