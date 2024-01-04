@@ -10,8 +10,6 @@ on:
     branches: [ main, master ]
 
 env:
-  TARGET_DEV: ${{ github.ref_name == github.event.repository.default_branch }}
-  TARGET_TEST_OR_PROD: ${{ contains(fromJson('["created", "prereleased", "released"]'), github.event.action) }}
   TARGET_TEST: ${{ github.event.release != null && contains(fromJson('["created", "prereleased", "released"]'), github.event.action) && github.event.release.prerelease }}
   TARGET_PROD: ${{ github.event.release != null && contains(fromJson('["created", "prereleased", "released"]'), github.event.action) && !github.event.release.prerelease }}
 
@@ -45,7 +43,7 @@ jobs:
 
   publish:
     needs: build
-    if: ${{ env.TARGET_DEV || env.TARGET_TEST_OR_PROD }}
+    if: ${{ github.ref_name == github.event.repository.default_branch || contains(fromJson('["created", "prereleased", "released"]'), github.event.action) }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
