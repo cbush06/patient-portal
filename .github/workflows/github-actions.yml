@@ -9,6 +9,12 @@ on:
   pull_request:
     branches: [ main, master ]
 
+env:
+  TARGET_DEV: ${{ github.ref_name == github.event.repository.default_branch }}
+  TARGET_TEST_OR_PROD: contains(fromJson('["created", "prereleased", "released"]'), github.event.action) )
+  TARGET_TEST: ${{ github.event.release != null && env.TARGET_TEST_OR_PROD && github.event.release.prerelease }}
+  TARGET_PROD: ${{ github.event.release != null && env.TARGET_TEST_OR_PROD && !github.event.release.prerelease }}
+
 jobs:
 
   build:
@@ -24,7 +30,14 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - run: npm ci
-      - run: bash build.sh
+      - run: |
+          if [[ $TARGET_PROD = true ]]; then 
+            ./build.sh prod; 
+          elif [[ $TARGET_TEST = true ]]; then 
+            ./build.sh test; 
+          else 
+            ./build.sh dev; 
+          fi
       - uses: actions/upload-artifact@v3
         with:
           name: dist
@@ -32,7 +45,7 @@ jobs:
 
   publish:
     needs: build
-    if: ${{ github.ref_name == github.event.repository.default_branch || ( github.event.release != null && contains(fromJson('["created", "prereleased", "released"]'), github.event.action) ) }}
+    if: ${{ env.TARGET_DEV || env.TARGET_TEST_OR_PROD }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
