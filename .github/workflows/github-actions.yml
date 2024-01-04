@@ -24,7 +24,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - run: npm ci
-      - run: npm run build --if-present
+      - run: ./build.sh
       - uses: actions/upload-artifact@v3
         with:
           name: dist
@@ -56,7 +56,7 @@ jobs:
           images: |
             docker.io/cbush06/patient-portal
           tags: |
-            type=raw,value=latest,enable=${{ github.ref_name == github.event.repository.default_branch && github.event.release == null }}
+            type=raw,value=latest,enable=${{ github.event_name == 'push' && github.ref_name == github.event.repository.default_branch && github.event.release == null }}
             type=semver,pattern={{raw}},suffix=-RC,enable=${{ github.event.release != null && github.event.release.prerelease == true }}
             type=semver,pattern={{raw}},enable=${{ github.event.release != null && github.event.release.prerelease == false }}
       - name: Build and push Docker image
